@@ -2,7 +2,7 @@
 [![](https://img.shields.io/github/license/radianttap/Coordinator.svg)](https://github.com/radianttap/Coordinator/blob/master/LICENSE)
 ![](https://img.shields.io/badge/swift-6.0-223344.svg?logo=swift&labelColor=FA7343&logoColor=white)
 \
-![platforms: iOS|tvOS|watchOS|macOS|visionOS](https://img.shields.io/badge/platform-iOS_15_·_tvOS_15_·_visionOS_1-blue.svg)
+![platforms: iOS|tvOS|watchOS|macOS|visionOS](https://img.shields.io/badge/platform-iOS_18_·_tvOS_18_·_visionOS_2-blue.svg)
 
 # Coordinator
 
