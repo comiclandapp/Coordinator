@@ -16,6 +16,12 @@ Since this is *core architectural pattern*, it’s not possible to explain its u
 - version 7.x and up is made with Swift 5.5 concurrency in mind (async / await)
 - versions before that (6.x) use closures
 
+### Migrating to 8.1.0
+
+`Coordinator.init(rootViewController:)` now takes a non-optional `T` instead of `T?`. The previous signature crashed on `nil` via `preconditionFailure`, so the only callers affected are those passing an explicit `nil` (which would have crashed anyway). Subclasses that construct their own root VC should build it before calling `super.init(rootViewController:)`.
+
+`CoordinatingQueuedMessage` is now `@MainActor () -> Void`. Closures passed to `enqueueMessage(_:)` already had to run on the main actor in practice; the annotation just makes the contract explicit.
+
 Just drag `Coordinator` folder into your project — it‘s only a handful of files.
 
 Or add add this repo’s URL through Swift Package Manager.
