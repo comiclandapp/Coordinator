@@ -18,7 +18,17 @@ public protocol Coordinating: AnyObject {
 	///	By default it will be String representation of the Coordinator's subclass.
 	///	If you directly instantiate `Coordinator<T>`, then you need to set it manually.
 	var identifier: String { get }
-	
+
+	///	Type-erased view of the coordinator's root view controller.
+	///
+	///	`Coordinator<T>` keeps its strongly-typed `rootViewController: T` property
+	///	for subclass ergonomics (so e.g. `NavigationCoordinator.rootViewController`
+	///	stays `UINavigationController`). This requirement exists for callers that
+	///	only hold a `Coordinating` reference — typically a `TabCoordinator`
+	///	iterating over its children — so they can reach the underlying view
+	///	controller without casting.
+	var anyRootViewController: UIViewController { get }
+
 	/// Parent Coordinator can be any other Coordinator.
 	var parent: Coordinating? { get set }
 	

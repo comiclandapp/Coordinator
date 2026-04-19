@@ -46,6 +46,13 @@ Expose to Coordinator only those behaviors that cause push/pop/present to bubble
 open class Coordinator<T: UIViewController>: UIResponder, Coordinating {
 	public let rootViewController: T
 
+	///	Satisfies the `Coordinating.anyRootViewController` requirement by
+	///	up-casting the strongly-typed `rootViewController`. You almost never need
+	///	to call this directly on a concrete `Coordinator<T>`; it exists so that
+	///	code holding an existential `Coordinating` (like `TabCoordinator`'s
+	///	child iteration) can get at the view controller.
+	public var anyRootViewController: UIViewController { rootViewController }
+
 
 	/// You need to supply UIViewController (or any of its subclasses) that will be loaded as root of the UI hierarchy.
 	///	Usually one of container controllers (UINavigationController, UITabBarController etc).
