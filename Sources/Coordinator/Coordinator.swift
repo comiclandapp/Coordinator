@@ -53,12 +53,11 @@ open class Coordinator<T: UIViewController>: UIResponder, Coordinating {
 	/// - parameter rootViewController: UIViewController at the top of the hierarchy.
 	/// - returns: Coordinator instance, fully prepared but started yet.
 	///
-	///	Note: if you override this init, you must call `super`.
-	public init(rootViewController: T?) {
-		guard let rvc = rootViewController else {
-			preconditionFailure("Must supply UIViewController (or any of its subclasses) or override this init and instantiate VC in there.")
-		}
-		self.rootViewController = rvc
+	///	Note: if you override this init, you must call `super`. Subclasses that
+	///	instantiate their own root view controller should construct it first and
+	///	pass it to `super.init`.
+	public init(rootViewController: T) {
+		self.rootViewController = rootViewController
 		super.init()
 	}
 
