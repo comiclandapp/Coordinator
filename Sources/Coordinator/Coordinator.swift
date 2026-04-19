@@ -14,7 +14,7 @@ import UIKit
 ///
 ///	You need to do this in case method needs a dependency that may not be available
 ///	at that particular moment. So save it until dependencies are updated.
-public typealias CoordinatingQueuedMessage = () -> Void
+public typealias CoordinatingQueuedMessage = @MainActor () -> Void
 
 
 /**
