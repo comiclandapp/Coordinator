@@ -23,7 +23,7 @@ In the Coordinator subclass, you’ll override the method you defined in the UIR
 
 ### NavigationCoordinator
 
-This is the only concrete subclass this library offers and I encourage you to subclass it for your own needs. 
+The first concrete subclass this library offers, and the one you'll subclass most often.
 
 It uses `UINavigationController` as root VC and it keeps references to shown UIVCs in its own `viewControllers` property. This property shadows UINavigationController’s property of the same name but it is not cleared out until the NavigationCoordinator is stopped. This allows you to replace one NavigationCoordinator instance with another and saving and restoring their stack of UIVC instances in the process.
 
@@ -44,3 +44,32 @@ If offers all the methods you may need when working with navigation pattern:
 NavigationController gives you a chance to react to the customer tap on the Back button. Simply override this method and update your internal state:
 
 · `‌handlePopBack(to vc: UIViewController?)`
+
+### TabCoordinator
+
+Available on iOS 18, tvOS 18, visionOS 2 and later. Manages a `UITabBarController` where each tab is backed by its own child coordinator (typically a `NavigationCoordinator`).
+
+Callers build each `UITab` themselves — including `UISearchTab`, `UITabGroup` for the iPad sidebar, placement, badges, and the iOS 26 liquid-glass styling — and pair it with the owning `Coordinating`:
+
+```swift
+let home = HomeCoordinator(...)
+let homeTab = UITab(title: "Home", image: UIImage(systemName: "house"),
+                    identifier: "home") { _ in
+    home.anyRootViewController
+}
+tabCoordinator.setTabs([
+    .init(tab: homeTab, coordinator: home),
+    // ...
+])
+tabCoordinator.start()
+```
+
+`TabCoordinator.start()` then starts each child, installs the `UITab` array on the root `UITabBarController`, and assigns itself as the delegate. When the customer switches tabs, the owning coordinator receives `activate()` so the responder chain and any pop-back bookkeeping point at the right place.
+
+It deliberately does **not** expose `present` / `dismiss`: modal presentation from inside a tab is the child navigation coordinator's job. It also keeps the inherited default for `coordinatorDidFinish`, since tabs don't "finish" the way a pushed flow does.
+
+Override this hook to react to tab switches without touching the delegate method:
+
+· `‌handleTabSelection(_ tab: UITab, previous: UITab?)`
+
+The `anyRootViewController` property used in the `UITab` provider above is a type-erased accessor on the `Coordinating` protocol. Concrete coordinators continue to expose their strongly-typed `rootViewController: T` property; `anyRootViewController` exists for code that holds a `Coordinating` existential and needs to reach the underlying view controller without casting.
