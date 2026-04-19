@@ -61,7 +61,10 @@ public protocol Coordinating: AnyObject {
 	
 	///	Coordinator will take ownership over root UIVC.
 	///
-	///	This should call `activate()` first and then *replace* 
+	///	This should call `activate()` first and then *replace* whatever content the
+	///	root VC is currently displaying with the Coordinator's own content (e.g.
+	///	reassigning `viewControllers` on a `UINavigationController`), clearing out
+	///	any stack left behind by a previous owner.
 	///
 	///	See NavigationCoordinator for one possible usage.
 	func takeover()
