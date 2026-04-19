@@ -62,6 +62,23 @@ open class NavigationCoordinator: Coordinator<UINavigationController>, UINavigat
 		rootViewController.dismiss(animated: animated, completion: completion)
 	}
 
+	public func present(_ vc: UIViewController, animated: Bool = true) async {
+		vc.parentCoordinator = self
+		await withCheckedContinuation { continuation in
+			rootViewController.present(vc, animated: animated) {
+				continuation.resume()
+			}
+		}
+	}
+
+	public func dismiss(animated: Bool = true) async {
+		await withCheckedContinuation { continuation in
+			rootViewController.dismiss(animated: animated) {
+				continuation.resume()
+			}
+		}
+	}
+
 
 	//	MARK:- Navigating
 
