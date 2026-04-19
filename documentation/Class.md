@@ -7,7 +7,7 @@
 
 ```swift
 open class Coordinator<T: UIViewController>: UIResponder, Coordinating {
-	public init(rootViewController: T?) { ... }
+	public init(rootViewController: T) { ... }
 	
 	open override var coordinatingResponder: UIResponder? {
 		return parent as? UIResponder
@@ -37,9 +37,9 @@ If offers all the methods you may need when working with navigation pattern:
 
 · `‌pop(to vc: UIViewController, animated: Bool = true)` — programmatically pop the stack to the given UIVC instance, which should exist in the navigation stack.
 
-· `‌present(_ vc: UIViewController, animated: Bool = true, completion: (() -> Void)? = nil)` — `NavigationCoordinator` will setup itself as `parentCoordinator` for the given `vc` and then its root UINavigationController will present that `vc`
+· `‌present(_ vc: UIViewController, animated: Bool = true, completion: (() -> Void)? = nil)` — `NavigationCoordinator` will setup itself as `parentCoordinator` for the given `vc` and then its root UINavigationController will present that `vc`. An `async` overload `present(_:animated:)` is also available for callers using structured concurrency.
 
-· `‌dismiss(animated: Bool = true, completion: (() -> Void)? = nil)` — dismiss the currently presented UIVC.
+· `‌dismiss(animated: Bool = true, completion: (() -> Void)? = nil)` — dismiss the currently presented UIVC. An `async` overload `dismiss(animated:)` is also available.
 
 NavigationController gives you a chance to react to the customer tap on the Back button. Simply override this method and update your internal state:
 
