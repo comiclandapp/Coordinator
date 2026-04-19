@@ -6,9 +6,9 @@ import PackageDescription
 let package = Package(
     name: "Coordinator",
     platforms: [
-		.iOS(.v18),
-		.tvOS(.v18),
-		.visionOS(.v2)
+		.iOS(.v15),
+		.tvOS(.v15),
+		.visionOS(.v1)
     ],
     products: [
         .library(

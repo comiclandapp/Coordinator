@@ -40,6 +40,7 @@ import UIKit
 ///	- `coordinatorDidFinish` keeps the inherited default: tabs don't "finish"
 ///	  the way a pushed flow does, so there's nothing tab-specific to do.
 @MainActor
+@available(iOS 18, tvOS 18, visionOS 2, *)
 open class TabCoordinator: Coordinator<UITabBarController>, UITabBarControllerDelegate {
 
 	///	Pairing of a pre-built `UITab` with the coordinator that drives its content.
