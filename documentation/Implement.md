@@ -91,7 +91,7 @@ func application(_ application: UIApplication, configurationForConnecting connec
 }
 ```
 
-For this to work, we need inject appDependency property into UISceneSession:
+For this to work, we need inject appDependency property into `UISceneSession`:
 
 ```swift
 extension UISceneSession {
@@ -234,7 +234,7 @@ This is also easy to script with tools like [Sourcery](https://github.com/krzysz
 
 ### Naming your coordinatingResponder methods
 
-I use consistent naming scheme to group my coordinatingResponder methods. Anything that affects entire app is prefixed with `global` like `globalDisplay(page:sender:)` method above.
+I use consistent naming scheme to group my _coordinatingResponder_ methods. Anything that affects entire app is prefixed with `global` like `globalDisplay(page:sender:)` method above.
 
 All stuff dealing with shopping cart can use `cart` prefix. Same with account, catalog etc. Xcode’s autocomplete then helps to filter possible options when coding.
 
