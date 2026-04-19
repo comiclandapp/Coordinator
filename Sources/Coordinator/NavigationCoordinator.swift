@@ -82,7 +82,7 @@ open class NavigationCoordinator: Coordinator<UINavigationController>, UINavigat
 	///	Replaces current top UIVC in the navigation stack (currently visible UIVC) in the root
 	///	with the supplied `vc` instance.
 	public func top(_ vc: UIViewController, animated: Bool = true) {
-		if viewControllers.count == 0 {
+		if viewControllers.isEmpty {
 			root(vc)
 			return
 		}
@@ -103,7 +103,7 @@ open class NavigationCoordinator: Coordinator<UINavigationController>, UINavigat
 		if viewControllers.count < 2 {
 			return
 		}
-		viewControllers = Array(viewControllers.dropLast())
+		viewControllers.removeLast()
 
 		rootViewController.popViewController(animated: animated)
 	}
@@ -117,7 +117,7 @@ open class NavigationCoordinator: Coordinator<UINavigationController>, UINavigat
 			return
 		}
 
-		viewControllers = Array(viewControllers.dropLast(lastPosition - index))
+		viewControllers.removeLast(lastPosition - index)
 		rootViewController.popToViewController(vc, animated: animated)
 	}
 
@@ -204,7 +204,7 @@ open class NavigationCoordinator: Coordinator<UINavigationController>, UINavigat
 private extension NavigationCoordinator {
 	func didPopTransition(to viewController: UIViewController) {
 		//	Check: is there any controller left shown in this Coordinator?
-		if viewControllers.count == 0 {
+		if viewControllers.isEmpty {
 			//	there isn't thus inform the parent Coordinator that this child Coordinator is done.
 			parent?.coordinatorDidFinish(self)
 			return
@@ -231,7 +231,7 @@ private extension NavigationCoordinator {
 		if lastIndex <= index {
 			return
 		}
-		viewControllers = Array(viewControllers.dropLast(lastIndex - index))
+		viewControllers.removeLast(lastIndex - index)
 
 		handlePopBack(to: viewController)
 	}

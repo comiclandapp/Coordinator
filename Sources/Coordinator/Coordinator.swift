@@ -192,7 +192,9 @@ open class Coordinator<T: UIViewController>: UIResponder, Coordinating {
 		//	clean up the queue, in case it's re-populated while this pass is ongoing
 		queuedMessages.removeAll()
 		//	execute each message
-		arr.forEach { $0() }
+		for message in arr {
+			message()
+		}
 	}
 }
 
