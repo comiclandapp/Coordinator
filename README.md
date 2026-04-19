@@ -22,6 +22,8 @@ Since this is *core architectural pattern*, it’s not possible to explain its u
 
 `CoordinatingQueuedMessage` is now `@MainActor () -> Void`. Closures passed to `enqueueMessage(_:)` already had to run on the main actor in practice; the annotation just makes the contract explicit.
 
+`NavigationCoordinator` now offers `async` overloads of `present(_:animated:)` and `dismiss(animated:)` alongside the existing completion-based methods. They're purely additive — existing call sites keep working — but callers using structured concurrency can now write `await coord.present(vc)` instead of wrapping UIKit's completion API in a `withCheckedContinuation` themselves.
+
 Just drag `Coordinator` folder into your project — it‘s only a handful of files.
 
 Or add add this repo’s URL through Swift Package Manager.
