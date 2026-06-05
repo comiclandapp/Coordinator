@@ -47,9 +47,9 @@ NavigationController gives you a chance to react to the customer tap on the Back
 
 ### TabCoordinator
 
-Available on iOS 18, tvOS 18, visionOS 2 and later. Manages a `UITabBarController` where each tab is backed by its own child coordinator (typically a `NavigationCoordinator`).
+Manages a `UITabBarController` where each tab is backed by its own child coordinator (typically a `NavigationCoordinator`).
 
-Callers build each `UITab` themselves — including `UISearchTab`, `UITabGroup` for the iPad sidebar, placement, badges, and the iOS 26 liquid-glass styling — and pair it with the owning `Coordinating`:
+On iOS 18, tvOS 18, visionOS 2 and later, callers build each `UITab` themselves — including `UISearchTab`, `UITabGroup` for the iPad sidebar, placement, badges, and the iOS 26 liquid-glass styling — and pair it with the owning `Coordinating`:
 
 ```swift
 let home = HomeCoordinator(...)
@@ -64,12 +64,23 @@ tabCoordinator.setTabs([
 tabCoordinator.start()
 ```
 
-`TabCoordinator.start()` then starts each child, installs the `UITab` array on the root `UITabBarController`, and assigns itself as the delegate. When the customer switches tabs, the owning coordinator receives `activate()` so the responder chain and any pop-back bookkeeping point at the right place.
+On iOS versions below 18 (down to the package minimum) there is no `UITab`. Use the primitive fallback initializer instead, supplying title, image, and optional badge:
+
+```swift
+tabCoordinator.setTabs([
+    .init(title: "Home", image: UIImage(systemName: "house"), coordinator: home),
+    // ...
+])
+```
+
+`TabCoordinator` then synthesizes the per-version plumbing: a `UITabBarItem` installed via `UITabBarController.viewControllers` pre-18, or a promoted `UITab` on iOS 18+. The richer iOS 18 tab surface (`UISearchTab`, `UITabGroup`, …) is unavailable through this fallback — it carries only title, image, and badge.
+
+`TabCoordinator.start()` then starts each child, installs the tabs on the root `UITabBarController`, and assigns itself as the delegate. When the customer switches tabs, the owning coordinator receives `activate()` so the responder chain and any pop-back bookkeeping point at the right place.
 
 It deliberately does **not** expose `present` / `dismiss`: modal presentation from inside a tab is the child navigation coordinator's job. It also keeps the inherited default for `coordinatorDidFinish`, since tabs don't "finish" the way a pushed flow does.
 
 Override this hook to react to tab switches without touching the delegate method:
 
-· `‌handleTabSelection(_ tab: UITab, previous: UITab?)`
+· `‌handleTabSelection(_ selected: Tab, previous: Tab?)` — `previous` is `nil` on iOS versions below 18, where the platform only reports the newly-selected tab.
 
 The `anyRootViewController` property used in the `UITab` provider above is a type-erased accessor on the `Coordinating` protocol. Concrete coordinators continue to expose their strongly-typed `rootViewController: T` property; `anyRootViewController` exists for code that holds a `Coordinating` existential and needs to reach the underlying view controller without casting.
