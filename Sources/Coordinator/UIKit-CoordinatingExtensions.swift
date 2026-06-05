@@ -8,7 +8,10 @@
 
 import UIKit
 
-//	Inject parentCoordinator property into all UIViewControllers
+/**
+ Injects `parentCoordinator` property into `UIViewController`.
+ */
+
 extension UIViewController {
     private class WeakCoordinatingTrampoline: NSObject {
         weak var coordinating: Coordinating?
@@ -36,31 +39,39 @@ extension UIViewController {
 
 
 
-/**
-Driving engine of the message passing through the app, with no need for Delegate pattern nor Singletons.
-
-It piggy-backs on the `UIResponder.next` in order to pass the message through UIView/UIVC hierarchy of any depth and complexity.
-However, it does not interfere with the regular `UIResponder` functionality.
-
-At the `UIViewController` level (see below), it‘s intercepted to switch up to the coordinator, if the UIVC has one.
-Once that happens, it stays in the `Coordinator` hierarchy, since coordinator can be nested only inside other coordinators.
-*/
 extension UIResponder {
+	/**
+	 Driving vessel for easy method calling and value passing *upwards* and *downwards* through any hierarchy in the app.
+	 
+	 It piggy-backs on the `UIResponder.next` in order to pass the message through UIView/UIVC hierarchy of any depth and complexity.
+	 However, it does not interfere with the regular `UIResponder` functionality.
+	 
+	 At the `UIViewController` level (see its extension in this same file), it‘s intercepted to switch up to the Coordinator, if the UIVC is owned by one.
+	 Once that happens, it stays in the `Coordinator` hierarchy, since Coordinator can be nested only inside other Coordinators.
+	 
+	 ## How to make good use of it
+	 
+	 To use this new property, 	you write open methods on `UIResponder` which, by default, simply call the same method on `coordinatingResponder` thus continue passing the method through the responder chain.
+	 
+	 Here are of many possible implementations of the custom message:
+	 
+	 ```
+	 @objc func messageTemplate(args: Whatever, sender: Any? = nil) {
+	   coordinatingResponder?.messageTemplate(args: args, sender: sender)
+	 }
+	 
+	 @objc func asyncFetcherExample(args: Whatever, sender: Any? = nil) async -> SomeResult {
+	   return await coordinatingResponder?.asyncFetcherExample(args: args, sender: sender)
+	 }
+	 ```
+	 */
 	@objc open var coordinatingResponder: UIResponder? {
 		return next
 	}
-
-	/*
-	// sort-of implementation of the custom message/command to put into your Coordinable extension
-
-	func messageTemplate(args: Whatever, sender: Any? = nil) {
-	coordinatingResponder?.messageTemplate(args: args, sender: sender)
-	}
-	*/
 }
 
 extension UIResponder {
-	///	Searches upwards the responder chain for the `Coordinator` that manages current `UIViewController`
+	///	Searches upwards the responder chain for the `Coordinator` instance that manages current `UIViewController`.
 	public var containingCoordinator: Coordinating? {
 		if let vc = self as? UIViewController, let pc = vc.parentCoordinator {
 			return pc
@@ -79,13 +90,10 @@ extension UIViewController {
 
 	Copied from `UIResponder.next` documentation:
 
-	- The `UIResponder` class does not store or set the next responder automatically,
-	instead returning nil by default.
-
+	- The `UIResponder` class does not store or set the next responder automatically, instead returning nil by default.
 	- Subclasses must override this method to set the next responder.
-
-	- UIViewController implements the method by returning its view’s superview;
-	- UIWindow returns the application object, and UIApplication returns nil.
+	- `UIViewController` implements the method by returning its `view`’s `superview`;
+	- `UIWindow` returns the application object, and `UIApplication` returns nil.
 */
 	override open var coordinatingResponder: UIResponder? {
 		guard let parentCoordinator = self.parentCoordinator else {
